@@ -54,7 +54,7 @@ export const githubProvider = new GithubAuthProvider();
 
 export const signInWithGoogle = () => {
 
-  return signInWithPopup(auth, googleProvider);
+  return signInWithPopup(auth, googleProvider);
 
 };
 
