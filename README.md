@@ -12,7 +12,7 @@ This project provides a polished login and registration experience with form val
 
 > Add your deployed project link here after deployment.
 
-[View Live Demo](http://localhost:5173/Growfinix-Frontend-Development-Internship-Task2-modern-auth-ui/)
+[View Live Demo](https://aaryani-modern-auth-ui.netlify.app/)
 
 ---
 
