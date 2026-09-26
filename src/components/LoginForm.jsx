@@ -1,5 +1,25 @@
 import { useForm } from "react-hook-form";
+import { loginWithEmail } from "../firebase";
 import SocialButtons from "./SocialButtons";
+
+function getLoginErrorMessage(errorCode) {
+  const errorMessages = {
+    "auth/invalid-credential":
+      "Incorrect email or password. Please try again.",
+    "auth/user-not-found":
+      "No account exists with this email address.",
+    "auth/wrong-password":
+      "Incorrect password. Please try again.",
+    "auth/invalid-email":
+      "Please enter a valid email address.",
+    "auth/too-many-requests":
+      "Too many failed attempts. Please wait a moment and try again.",
+    "auth/network-request-failed":
+      "Network error. Check your internet connection and try again.",
+  };
+
+  return errorMessages[errorCode] || "Unable to sign in. Please try again.";
+}
 
 export default function LoginForm({ onSwitchToRegister }) {
   const {
@@ -13,35 +33,22 @@ export default function LoginForm({ onSwitchToRegister }) {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      // Demo email/password login.
-      // Social login is handled separately by Firebase in SocialButtons.jsx.
-      if (
-        data.email === "test@example.com" &&
-        data.password === "Password1!"
-      ) {
-        alert("Demo login successful!");
-        return;
-      }
-
-      setError("root", {
-        type: "manual",
-        message:
-          "Invalid demo credentials. Use test@example.com and Password1!, or sign in with Google or GitHub.",
-      });
+      await loginWithEmail(data.email, data.password);
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Email login error:", error);
 
       setError("root", {
         type: "manual",
-        message: "Something went wrong. Please try again.",
+        message: getLoginErrorMessage(error.code),
       });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-slide-up">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4 animate-slide-up"
+    >
       {errors.root && (
         <div
           role="alert"
@@ -93,7 +100,9 @@ export default function LoginForm({ onSwitchToRegister }) {
           <button
             type="button"
             onClick={() =>
-              alert("Forgot password can be added using Firebase Password Reset.")
+              alert(
+                "Password reset can be added later using Firebase sendPasswordResetEmail."
+              )
             }
             className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
           >
@@ -131,7 +140,6 @@ export default function LoginForm({ onSwitchToRegister }) {
         <span>or continue with</span>
       </div>
 
-      {/* Real Firebase Google and GitHub login */}
       <SocialButtons />
 
       <p className="pt-1 text-center text-sm text-slate-300">

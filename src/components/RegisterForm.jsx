@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { registerWithEmail } from "../firebase";
 import SocialButtons from "./SocialButtons";
 
 function passwordStrength(password) {
@@ -13,7 +14,7 @@ function passwordStrength(password) {
 }
 
 function getStrengthDetails(strength) {
-  const details = [
+  const levels = [
     {
       label: "Very weak",
       color: "#ef4444",
@@ -36,7 +37,22 @@ function getStrengthDetails(strength) {
     },
   ];
 
-  return details[strength];
+  return levels[strength];
+}
+
+function getRegisterErrorMessage(errorCode) {
+  const errorMessages = {
+    "auth/email-already-in-use":
+      "An account already exists with this email address. Please sign in instead.",
+    "auth/invalid-email":
+      "Please enter a valid email address.",
+    "auth/weak-password":
+      "Password is too weak. Please use a stronger password.",
+    "auth/network-request-failed":
+      "Network error. Check your internet connection and try again.",
+  };
+
+  return errorMessages[errorCode] || "Unable to create your account. Please try again.";
 }
 
 export default function RegisterForm({ onSwitchToLogin }) {
@@ -56,25 +72,22 @@ export default function RegisterForm({ onSwitchToLogin }) {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 900));
-
-      // This is a frontend validation demo.
-      // Google and GitHub registration/sign-in work through Firebase OAuth.
-      alert(
-        `Account form submitted successfully for ${data.name}. Connect Firebase email/password authentication to make email registration permanent.`
-      );
+      await registerWithEmail(data.name, data.email, data.password);
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Email registration error:", error);
 
       setError("root", {
         type: "manual",
-        message: "Registration failed. Please try again.",
+        message: getRegisterErrorMessage(error.code),
       });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-slide-up">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4 animate-slide-up"
+    >
       {errors.root && (
         <div
           role="alert"
@@ -252,7 +265,6 @@ export default function RegisterForm({ onSwitchToLogin }) {
         <span>or continue with</span>
       </div>
 
-      {/* Real Firebase Google and GitHub login */}
       <SocialButtons />
 
       <p className="pt-1 text-center text-sm text-slate-300">

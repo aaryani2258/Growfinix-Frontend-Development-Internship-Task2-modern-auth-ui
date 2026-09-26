@@ -3,6 +3,9 @@ import {
   getAuth,
   GoogleAuthProvider,
   GithubAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
@@ -21,21 +24,46 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 
+/* Social authentication providers */
 export const googleProvider = new GoogleAuthProvider();
+
 googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 export const githubProvider = new GithubAuthProvider();
 
+/* Google authentication */
 export const signInWithGoogle = () => {
   return signInWithPopup(auth, googleProvider);
 };
 
+/* GitHub authentication */
 export const signInWithGitHub = () => {
   return signInWithPopup(auth, githubProvider);
 };
 
+/* Normal email/password registration */
+export const registerWithEmail = async (name, email, password) => {
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+
+  await updateProfile(userCredential.user, {
+    displayName: name,
+  });
+
+  return userCredential;
+};
+
+/* Normal email/password login */
+export const loginWithEmail = (email, password) => {
+  return signInWithEmailAndPassword(auth, email, password);
+};
+
+/* Logout */
 export const logOut = () => {
   return signOut(auth);
 };
