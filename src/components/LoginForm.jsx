@@ -13,17 +13,26 @@ export default function LoginForm({ onSwitchToRegister }) {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((res) => setTimeout(res, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-      if (data.email === "test@example.com" && data.password === "Password1!") {
-        alert("Login successful!");
-      } else {
-        setError("root", {
-          type: "manual",
-          message: "Invalid email or password.",
-        });
+      // Demo email/password login.
+      // Social login is handled separately by Firebase in SocialButtons.jsx.
+      if (
+        data.email === "test@example.com" &&
+        data.password === "Password1!"
+      ) {
+        alert("Demo login successful!");
+        return;
       }
-    } catch {
+
+      setError("root", {
+        type: "manual",
+        message:
+          "Invalid demo credentials. Use test@example.com and Password1!, or sign in with Google or GitHub.",
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+
       setError("root", {
         type: "manual",
         message: "Something went wrong. Please try again.",
@@ -34,21 +43,28 @@ export default function LoginForm({ onSwitchToRegister }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-slide-up">
       {errors.root && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+        <div
+          role="alert"
+          className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200"
+        >
           {errors.root.message}
         </div>
       )}
 
       <div>
-        <label htmlFor="login-email" className="mb-1 block text-sm font-medium text-gray-200">
-          Email
+        <label
+          htmlFor="login-email"
+          className="mb-1.5 block text-sm font-medium text-slate-200"
+        >
+          Email address
         </label>
+
         <input
           id="login-email"
           type="email"
           autoComplete="email"
-          className={`input-field ${errors.email ? "error" : ""}`}
           placeholder="you@example.com"
+          className={`input-field ${errors.email ? "error" : ""}`}
           {...register("email", {
             required: "Email is required",
             pattern: {
@@ -57,21 +73,40 @@ export default function LoginForm({ onSwitchToRegister }) {
             },
           })}
         />
+
         {errors.email && (
-          <p className="mt-1 text-xs text-red-300">{errors.email.message}</p>
+          <p className="mt-1.5 text-xs text-red-300">
+            {errors.email.message}
+          </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="login-password" className="mb-1 block text-sm font-medium text-gray-200">
-          Password
-        </label>
+        <div className="mb-1.5 flex items-center justify-between gap-3">
+          <label
+            htmlFor="login-password"
+            className="text-sm font-medium text-slate-200"
+          >
+            Password
+          </label>
+
+          <button
+            type="button"
+            onClick={() =>
+              alert("Forgot password can be added using Firebase Password Reset.")
+            }
+            className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
+          >
+            Forgot password?
+          </button>
+        </div>
+
         <input
           id="login-password"
           type="password"
           autoComplete="current-password"
+          placeholder="Enter your password"
           className={`input-field ${errors.password ? "error" : ""}`}
-          placeholder="••••••••"
           {...register("password", {
             required: "Password is required",
             minLength: {
@@ -80,8 +115,11 @@ export default function LoginForm({ onSwitchToRegister }) {
             },
           })}
         />
+
         {errors.password && (
-          <p className="mt-1 text-xs text-red-300">{errors.password.message}</p>
+          <p className="mt-1.5 text-xs text-red-300">
+            {errors.password.message}
+          </p>
         )}
       </div>
 
@@ -93,17 +131,15 @@ export default function LoginForm({ onSwitchToRegister }) {
         <span>or continue with</span>
       </div>
 
-      <SocialButtons
-        onGoogle={() => {}}
-        onGitHub={() => {}}
-      />
+      {/* Real Firebase Google and GitHub login */}
+      <SocialButtons />
 
-      <p className="text-center text-sm text-gray-300">
+      <p className="pt-1 text-center text-sm text-slate-300">
         Don’t have an account?{" "}
         <button
           type="button"
           onClick={onSwitchToRegister}
-          className="font-semibold text-indigo-300 hover:text-indigo-200"
+          className="font-semibold text-indigo-300 transition hover:text-indigo-200"
         >
           Create one
         </button>

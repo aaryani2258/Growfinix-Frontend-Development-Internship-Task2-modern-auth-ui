@@ -1,71 +1,41 @@
 import { initializeApp } from "firebase/app";
-
 import {
-
-  getAuth,
-
-  GoogleAuthProvider,
-
-  GithubAuthProvider,
-
-  signInWithPopup,
-
-  signOut,
-
+  getAuth,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
+  signOut,
 } from "firebase/auth";
 
-import { getAnalytics } from "firebase/analytics";
-
 const firebaseConfig = {
-
-  apiKey: "AIzaSyDWomnjjbV8nEoMY6_Odtpq22z-rXwl_mk",
-
-  authDomain: "modernauth-75f6e.firebaseapp.com",
-
-  projectId: "modernauth-75f6e",
-
-  storageBucket: "modernauth-75f6e.firebasestorage.app",
-
-  messagingSenderId: "199967763750",
-
-  appId: "1:199967763750:web:bd73725bc2892ec53325e7",
-
-  measurementId: "G-YKZE30K1MX",
-
+  apiKey: "AIzaSyAscFpzZji301d8MXujLSi87yAbNIQIfxw",
+  authDomain: "modern-auth-ai.firebaseapp.com",
+  projectId: "modern-auth-ai",
+  storageBucket: "modern-auth-ai.firebasestorage.app",
+  messagingSenderId: "554867163479",
+  appId: "1:554867163479:web:8de50acd4cd0ea221a3e12",
+  measurementId: "G-38MB1L209S",
 };
 
 const app = initializeApp(firebaseConfig);
 
-/* Firebase Authentication */
-
 export const auth = getAuth(app);
 
-/* Firebase Analytics */
-
-export const analytics = getAnalytics(app);
-
-/* Authentication providers */
-
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: "select_account",
+});
 
 export const githubProvider = new GithubAuthProvider();
 
-/* Authentication functions */
-
 export const signInWithGoogle = () => {
-
   return signInWithPopup(auth, googleProvider);
-
 };
 
 export const signInWithGitHub = () => {
-
-  return signInWithPopup(auth, githubProvider);
-
+  return signInWithPopup(auth, githubProvider);
 };
 
 export const logOut = () => {
-
-  return signOut(auth);
-
+  return signOut(auth);
 };
